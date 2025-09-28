@@ -1,61 +1,94 @@
 # vid - Docker容器文件编辑工具
 
-vid是一个简单的命令行工具，允许您使用本地vim编辑器直接编辑Docker容器中的文件，而无需手动执行`docker cp`命令。
+vid 是一个命令行工具，允许您使用本地 vim 编辑器直接编辑 Docker 容器中的文件，而无需手动执行 `docker cp` 命令。
 
 ## 功能特点
 
-- 直接在Docker容器中编辑文件
-- 使用熟悉的vim编辑器
-- 自动处理文件复制过程
-- 静默模式运行，可选详细日志输出
-- 错误处理和调试信息提示
+使用本地 vim 编辑器直接编辑 Docker 容器中的文件
 
 ## 安装
 
+### 发布版本安装（推荐）
+
+从 [Releases](https://github.com/E9C50/vid/releases) 页面下载适用于您平台的预编译二进制文件：
+
+#### Linux
+
 ```bash
-# 克隆项目
-git clone <repository-url>
-
-# 进入项目目录
-cd vid
-
-# 编译
-go build -o vid main.go
-
-# 将vid添加到PATH中（可选）
+wget https://github.com/E9C50/vid/releases/download/vX.X.X/vid-linux-amd64.tar.gz
+tar -xzf vid-linux-amd64.tar.gz
 sudo mv vid /usr/local/bin/
 ```
 
+#### macOS
+
+```bash
+# 从 Releases 页面下载
+wget https://github.com/E9C50/vid/releases/download/vX.X.X/vid-darwin-amd64.tar.gz
+tar -xzf vid-darwin-amd64.tar.gz
+sudo mv vid /usr/local/bin/
+```
+
+#### Windows
+
+从 [Releases](https://github.com/<username>/vid/releases) 页面下载 `vid-windows-amd64.zip` 文件，解压后将 `vid.exe` 添加到系统 PATH 环境变量中。
+
+### 从源码构建
+
+需要安装 Go 1.24 或更高版本：
+
+```bash
+# 克隆仓库
+git clone https://github.com/E9C50/vid
+
+cd vid
+
+# 构建二进制文件
+go build -o vid main.go
+
+# 可选：移动到 PATH 中的目录
+# Linux/macOS:
+sudo mv vid /usr/local/bin/
+
+# Windows (以管理员权限运行):
+move vid.exe C:\Windows\System32\
+```
+
+
+
 ## 使用方法
 
-基本用法：
 ```bash
-vid <container> <file_path>
+vid [选项] <容器> <文件路径>
 ```
 
-例如：
+### 选项
+
+- `-v`: 启用详细日志
+
+### 示例
+
 ```bash
+# 编辑容器中的文件
 vid my_container /etc/nginx/nginx.conf
-```
 
-启用详细日志输出：
-```bash
+# 带详细日志的编辑
 vid -v my_container /etc/nginx/nginx.conf
 ```
 
 ## 工作原理
 
-1. 使用`docker cp`从指定容器复制目标文件到本地临时文件
-2. 使用本地vim编辑器打开临时文件
-3. 保存更改后，使用`docker cp`将修改后的文件复制回容器
+1. 使用 `docker cp` 将目标文件从容器复制到本地临时文件
+2. 在本地 vim 编辑器中打开临时文件
+3. 保存并退出后将修改后的文件复制回容器
 4. 清理临时文件
 
 ## 依赖
 
 - Docker
-- vim编辑器
-- Go 1.24+（仅编译时需要）
+- vim 编辑器
+- Go 1.24+ (仅用于从源码构建)
 
 ## 许可证
 
-MIT
+[MIT LICENSE](https://github.com/E9C50/vid/LICENSE)
