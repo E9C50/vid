@@ -1,16 +1,39 @@
 # vid - Docker Container File Editor
 
-`vid` is a command-line tool that allows you to edit files inside Docker containers using your local vim editor, without manually running `docker cp` commands.
+English | [简体中文](./README.md)
 
-## Features
+<p align="center">
+  <strong>Tired of containers without vim?</strong><br>
+  <strong>Tired of manually copying config files back and forth with docker cp?</strong><br>
+  <strong>vid makes it simple!</strong>
+</p>
 
-Edit files directly inside Docker containers using your local vim editor
+---
 
-## Installation
+## 💡 Motivation
 
-### Precompiled Binaries (Recommended)
+When working with Docker containers, we often face these frustrations:
 
-Download precompiled binaries for your platform from the [Releases](https://github.com/E9C50/vid/releases) page:
+- 🔧 **No vim in containers**: Many minimal container images don't include text editors to reduce size
+- 📝 **Editing configs is tedious**: Have to manually `docker cp` files out, edit them, then copy them back
+- ⏱️ **Repetitive work**: Every edit requires the copy → edit → copy back workflow
+
+**vid** was created to solve these problems! It lets you edit files inside containers using your local vim editor, **all with a single command**.
+
+## ✨ Features
+
+- 🚀 **One-command editing**: Edit container files directly with a single command, no manual copying
+- 💻 **Use your local editor**: Leverage your familiar vim configuration and plugins
+- 🔄 **Automated workflow**: Automatically handles copying, editing, and writing back files
+- 🧹 **Auto cleanup**: Automatically removes temporary files after editing
+- 📊 **Verbose logging**: Use `-v` flag to see detailed operation logs
+- ⚡ **Lightweight & fast**: Single binary, no additional dependencies
+
+## 📦 Installation
+
+### Option 1: Download Precompiled Binary (Recommended)
+
+Download precompiled binaries for your platform from the [Releases](https://github.com/E9C50/vid/releases) page.
 
 #### Linux
 
@@ -18,77 +41,128 @@ Download precompiled binaries for your platform from the [Releases](https://gith
 wget https://github.com/E9C50/vid/releases/download/vX.X.X/vid-linux-amd64.tar.gz
 tar -xzf vid-linux-amd64.tar.gz
 sudo mv vid /usr/local/bin/
+sudo chmod +x /usr/local/bin/vid
 ```
 
 #### macOS
 
 ```bash
-# Download from Releases page
 wget https://github.com/E9C50/vid/releases/download/vX.X.X/vid-darwin-amd64.tar.gz
 tar -xzf vid-darwin-amd64.tar.gz
 sudo mv vid /usr/local/bin/
+sudo chmod +x /usr/local/bin/vid
 ```
 
 #### Windows
 
-Download `vid-windows-amd64.zip` from the [Releases](https://github.com/<username>/vid/releases) page, extract it, and add `vid.exe` to your system PATH.
+Download `vid-windows-amd64.zip` from the [Releases](https://github.com/E9C50/vid/releases) page, extract it, and add `vid.exe` to your system PATH.
 
-### Building from Source
+### Option 2: Build from Source
 
 Requires Go 1.24 or later:
 
 ```bash
 # Clone the repository
-git clone https://github.com/E9C50/vid
-
+git clone https://github.com/E9C50/vid.git
 cd vid
 
-# Build the binary
+# Build
 go build -o vid main.go
 
-# Optional: Move to a directory in your PATH
-# Linux/macOS:
+# Install to system path (optional)
 sudo mv vid /usr/local/bin/
-
-# Windows (run as Administrator):
-move vid.exe C:\Windows\System32\
 ```
 
-
-
-## Usage
+### Option 3: Using go install
 
 ```bash
-vid [OPTIONS] <container> <file_path>
+go install github.com/E9C50/vid@latest
+```
+
+## 🚀 Usage
+
+### Basic Usage
+
+```bash
+vid <container_name_or_id> <file_path_in_container>
 ```
 
 ### Options
 
-- `-v`: Enable verbose logging
+- `-v` - Enable verbose logging to see the full operation flow
 
 ### Examples
 
 ```bash
-# Edit a file in a container
-vid my_container /etc/nginx/nginx.conf
+# Edit nginx configuration file
+vid my_nginx_container /etc/nginx/nginx.conf
 
-# Edit with verbose output
-vid -v my_container /etc/nginx/nginx.conf
+# Edit application config file
+vid web_app /app/config/app.conf
+
+# Use verbose mode to see operation details
+vid -v my_container /etc/config.json
+
+# Use container ID
+vid a1b2c3d4e5f6 /var/log/app.log
 ```
 
-## How It Works
+### Comparison with Traditional Approach
 
-1. Copies the target file from the container to a temporary local file using `docker cp`
-2. Opens the temporary file in your local vim editor
-3. Copies the modified file back to the container after you save and exit
-4. Cleans up the temporary file
+**Traditional approach** (requires 3 commands):
+```bash
+docker cp my_container:/etc/nginx/nginx.conf ./nginx.conf
+vim ./nginx.conf
+docker cp ./nginx.conf my_container:/etc/nginx/nginx.conf
+rm ./nginx.conf
+```
 
-## Requirements
+**Using vid** (only 1 command):
+```bash
+vid my_container /etc/nginx/nginx.conf
+```
 
-- Docker
-- vim editor
-- Go 1.24+ (for building from source only)
+## 🔧 How It Works
 
-## License
+```
+┌─────────────────────────────────────────────────────────────┐
+│  1. Copy file from container to local temp file (docker cp) │
+│                          ↓                                   │
+│  2. Open temp file in local vim editor                      │
+│                          ↓                                   │
+│  3. Auto copy file back to container after save (docker cp) │
+│                          ↓                                   │
+│  4. Auto cleanup local temp file                            │
+└─────────────────────────────────────────────────────────────┘
+```
 
-[MIT LICENSE](https://github.com/E9C50/vid/LICENSE)
+## 📋 Requirements
+
+- Docker (installed and `docker` command available)
+- vim editor (installed on local system)
+- Access permissions to target container
+
+## ⚠️ Notes
+
+- Ensure the Docker container is running
+- Ensure the target file path exists in the container
+- Ensure you have appropriate read/write permissions for the container and file
+- Use the `-v` flag to see detailed error information
+
+## 🤝 Contributing
+
+Issues and Pull Requests are welcome!
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## 🌟 Star History
+
+If this project helps you, please give it a star ⭐
+
+---
+
+<p align="center">
+  Built with ❤️ and Go
+</p>
